@@ -8,14 +8,14 @@ name: Deploy to GitHub Pages
 # === Khi nào pipeline chạy? ===
 on:
   push:
-    branches: [main, gh-pages]       # Chạy khi push lên nhánh main
+    branches: [main, gh-pages]       # Chạy khi push code
   workflow_dispatch:        # Cho phép chạy thủ công từ GitHub UI
 
 # === Các job trong pipeline ===
 jobs:
   # Job 1: Build & Deploy
   build-and-deploy:
-    runs-on: ubuntu-latest   # Chạy trên máy ảo Ubuntu (free)
+    runs-on: ubuntu-latest   # Chạy trên máy ảo Ubuntu
 
     steps:
       # Step 1: Checkout code từ GitHub
@@ -34,7 +34,7 @@ jobs:
             exit 1
           fi
 
-      # Step 3: Cài đặt Node.js (Bắt buộc để chạy npm/Lighthouse)
+      # Step 3: Cài đặt Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -44,9 +44,9 @@ jobs:
       - name: Run Lighthouse CI Audit
         run: |
           npm install -g @lhci/cli
-          lhci autorun || true
+          lhci autorun --collect.url="http://localhost:8080" || true
 
-      # Step 5: Deploy lên GitHub Pages (Chỉ giữ lại 1 lần duy nhất ở cuối)
+      # Step 5: Deploy lên GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
