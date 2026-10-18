@@ -8,7 +8,7 @@ name: Deploy to GitHub Pages
 # === Khi nào pipeline chạy? ===
 on:
   push:
-    branches: [main, gh-pages]       # Chạy khi push code
+    branches: [main]       # CHỈ chạy khi push lên nhánh main
   workflow_dispatch:        # Cho phép chạy thủ công từ GitHub UI
 
 # === Các job trong pipeline ===
@@ -38,7 +38,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       # Step 4: Chạy Lighthouse CI Audit
       - name: Run Lighthouse CI Audit
@@ -48,7 +48,7 @@ jobs:
 
       # Step 5: Deploy lên GitHub Pages
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
