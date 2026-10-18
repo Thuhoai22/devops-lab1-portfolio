@@ -8,7 +8,7 @@ name: Deploy to GitHub Pages
 # === Khi nào pipeline chạy? ===
 on:
   push:
-    branches: [main]       # Chạy khi push lên nhánh main
+    branches: [main, gh-pages]       # Chạy khi push lên nhánh main
   workflow_dispatch:        # Cho phép chạy thủ công từ GitHub UI
 
 # === Các job trong pipeline ===
@@ -30,11 +30,23 @@ jobs:
             echo "index.html found!"
             echo "File size: $(wc -c < index.html) bytes"
           else
-            echo " index.html NOT found!"
+            echo "index.html NOT found!"
             exit 1
           fi
 
-      # Step 3: Deploy lên GitHub Pages
+      # Step 3: Cài đặt Node.js (Bắt buộc để chạy npm/Lighthouse)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # Step 4: Chạy Lighthouse CI Audit
+      - name: Run Lighthouse CI Audit
+        run: |
+          npm install -g @lhci/cli
+          lhci autorun || true
+
+      # Step 5: Deploy lên GitHub Pages (Chỉ giữ lại 1 lần duy nhất ở cuối)
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
